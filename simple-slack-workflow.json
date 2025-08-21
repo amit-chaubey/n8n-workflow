@@ -1,0 +1,150 @@
+{
+  "name": "simple-slack-workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "request an instation",
+        "formDescription": "please fill out the form",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "email address",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Preferred install date",
+              "fieldType": "date"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1008,
+        80
+      ],
+      "id": "b1bb6389-6fa2-46bf-b4d9-56833ae49775",
+      "name": "On form submission",
+      "webhookId": "0647aee0-34d8-4a3d-b4e3-4d3c2c16c89b"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "59bb8ddf-d0ca-45f0-ab9e-9873903d8f42",
+              "leftValue": "={{ $json['Preferred install date'].toDateTime() }}",
+              "rightValue": "={{ $now.plus(7, 'days') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "beforeOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -768,
+        -64
+      ],
+      "id": "94ba008a-d577-4f96-976d-eea07bf3f322",
+      "name": "is within 7 days?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        208
+      ],
+      "id": "d1e807ea-3c41-4495-b459-fdda3d581e4b",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C097PQEHA84",
+          "mode": "list",
+          "cachedResultName": "all-hectorlabs"
+        },
+        "text": "=new install request (within 7 days)\ncontact email:{{ $json['email address'] }}\nPreferred install date:{{ $json['Preferred install date'] }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -480,
+        -64
+      ],
+      "id": "e114cc2d-419c-4c57-83af-c91ef7e0f377",
+      "name": "Send a message",
+      "webhookId": "70390cdd-919f-4acc-9034-94a14e381b9a",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "wpKuVZrifOnJVrIr",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "is within 7 days?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is within 7 days?": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "222fecd8-9db7-45b4-822e-6d627a860a56",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "de9f69d54db8ff017e6bc1b06506e33ea2e0443b994b3acdc7e15b59fa2c5820"
+  },
+  "id": "w9VAwtymHJEHjeGl",
+  "tags": []
+}
