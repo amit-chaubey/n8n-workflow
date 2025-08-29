@@ -1,0 +1,228 @@
+{
+  "name": "Expense Tracker Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -416,
+        -208
+      ],
+      "id": "60a115e7-aee6-4b47-8367-2383699ffe59",
+      "name": "When chat message received",
+      "webhookId": "bbdd0072-c7da-44b7-9c01-e4c7480c9425",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        80
+      ],
+      "id": "6052291f-b790-48fc-a268-830a60421557",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rKj4orjynarJooqH",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        80
+      ],
+      "id": "25f71d28-6928-4bd4-8409-dc92bf317dff",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        128,
+        80
+      ],
+      "id": "7eaba510-1ef8-484a-88b8-d901ac57e34f",
+      "name": "Calculator",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1vj5sLKxJ7O0gYNZPgfRj3C4KY4-uqIZD8IG8YDL4dqk",
+          "mode": "list",
+          "cachedResultName": "Untitled spreadsheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vj5sLKxJ7O0gYNZPgfRj3C4KY4-uqIZD8IG8YDL4dqk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1677401621,
+          "mode": "list",
+          "cachedResultName": "Daily Track",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vj5sLKxJ7O0gYNZPgfRj3C4KY4-uqIZD8IG8YDL4dqk/edit#gid=1677401621"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        288,
+        80
+      ],
+      "id": "33980e02-457b-4cdd-bece-15502e0bc51c",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GODWsdDHzaIhZSqN",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a financial data assistant. Follow these rules strictly:\n\nNEVER make up data - only use what's in the sheet Always double-check rows and columns before answering\nUse calculator for all math operations Verify your findings by re-reading the specific cells\n\nSheet Structure:\nMonth header at top\nColumns: Day | Payee | Expense | Savings | Income | Balance\nEach row = one day's transactions\nBalance updates after each entry\n\nProcess:\n\nFind the correct month\nLocate the specific day/row\nRead across to get transaction details\nVerify amounts and calculations\nState where you found the data\nResponse Format:\n\"In [Month] row [#]: [Payee] - $[Amount] [Type], Balance: $[Balance]\"\n\nAlways show your verification and cite the exact row/column where data was found."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        -208
+      ],
+      "id": "f82660a8-8f0e-41fa-bbb0-5d858f697985",
+      "name": "Expense Tracker Agent",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "content": "## I'm Google Sheet\n**Get rows in sheet in google sheetk** ",
+        "height": 464,
+        "width": 480,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "a2b9dbc6-379c-43b0-be3e-f92fc77616dd",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## I'm Expense Tracker Agent\n**Source for Prompt (User Message)**\n**Prompt (User Message)**\n",
+        "height": 304,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -144,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "701ecc0a-d7de-4846-9089-a73eaeeb1749",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Expense Tracker Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Expense Tracker Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Expense Tracker Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Expense Tracker Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "Expense Tracker Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ed55e5f5-ee67-4361-bd49-c6775c703a8a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ce85ea57e4db032a0248e1e439a424030526fb77c1c5755ef639ff3c03d0c7f8"
+  },
+  "id": "9I4ftwqTMew4OzJP",
+  "tags": [
+    {
+      "name": "google sheet agent",
+      "id": "XUW4qMUoMLIRl4YH",
+      "createdAt": "2025-08-29T09:18:10.634Z",
+      "updatedAt": "2025-08-29T09:18:10.634Z"
+    }
+  ]
+}
